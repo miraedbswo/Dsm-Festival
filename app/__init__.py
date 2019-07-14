@@ -5,10 +5,18 @@ from jwt.exceptions import PyJWTError
 from flask_jwt_extended.exceptions import JWTExtendedException
 from peewee import MySQLDatabase
 
+from app.models.booth import BoothTable
+from app.models.rfid import RFIDTable
+from app.models.student import StudentTable
+from app.models.history import HistoryTable
+
 
 def register_extension(flask_app: Flask):
     from app import extension
-    extension.db = MySQLDatabase(**flask_app.config['DB_SETTING'])
+    extension.db = MySQLDatabase(**flask_app.config['DB_SETTING'], charset='utf8mb4')
+    # SET character_set_database = utf8;
+    # SET collation_database = utf8_general_ci;
+
     extension.jwt.init_app(flask_app)
     extension.jwt.invalid_token_loader(wrong_token_handler)
     extension.jwt.expired_token_loader(wrong_token_handler)
@@ -25,9 +33,15 @@ def register_hooks(flask_app: Flask):
 
 
 def register_views(flask_app: Flask):
-    # from app.views.account import account_blueprint
-    # flask_app.register_blueprint(account_blueprint)
-    pass
+    from app.views.user import user_blueprint
+    flask_app.register_blueprint(user_blueprint)
+
+
+def create_tables():
+    from app import extension
+    from app.models.base import BaseModel
+
+    extension.db.create_tables(BaseModel.__subclasses__())
 
 
 def create_app(*config_cls) -> Flask:
@@ -38,6 +52,7 @@ def create_app(*config_cls) -> Flask:
     register_extension(flask_app)
     register_hooks(flask_app)
     register_views(flask_app)
+    create_tables()
 
     return flask_app
 
