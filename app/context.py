@@ -8,11 +8,11 @@ class _ContextProperty:
 
     @property
     def request_payload(self) -> Optional[BaseModel]:
-        return self.request_payload.get()
+        return self._request_payload
 
     @request_payload.setter
-    def request_payload(self, value: Type[BaseModel]):
-        self.request_payload.set(value)
+    def request_payload(self, value):
+        self._request_payload = value
 
 
 context_property = _ContextProperty()
