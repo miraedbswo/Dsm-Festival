@@ -1,15 +1,16 @@
-from flask import Response, abort
+from flask import Response
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash
 
-from app.decorators.validate import PayloadLocation, validate_with_pydantic
+from app.decorators.json_schema import json_type_validate, LOGIN_POST_JSON
+from app.exception import WrongAuthException
 from app.views.base import BaseResource
 from app.models.student import StudentTable
 from app.context import context_property
 
 
 class Login(BaseResource):
-    # @validate_with_pydantic(PayloadLocation.JSON, )
+    @json_type_validate(LOGIN_POST_JSON)
     def post(self):
         payload = context_property.request_payload
 
@@ -18,7 +19,7 @@ class Login(BaseResource):
 
         user = StudentTable.get_or_none(id=id)
         if user is None or check_password_hash(user.pw, pw):
-            abort(401)
+            raise WrongAuthException()
 
         return Response({
             "accessToken": create_access_token(user.id)
