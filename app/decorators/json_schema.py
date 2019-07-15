@@ -30,4 +30,4 @@ def json_type_validate(json_schema: dict):
 
 
 RFID_POST_JSON = dict(rfid=str)
-
+LOGIN_POST_JSON = dict(id=str, pw=str)

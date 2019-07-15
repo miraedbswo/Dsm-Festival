@@ -38,6 +38,19 @@ class RFIDTable(BaseModel):
 
         return top_10_rank
 
+    @classmethod
+    def get_by_rfid(cls, rfid: str):
+        user = (
+            RFIDTable
+            .select()
+            .join(StudentTable)
+            .where(RFIDTable.rfid == rfid)
+            .get()
+        )
+
+        return user
+
+
 class UnsignedRFIDTable(BaseModel):
     rfid = CharField(primary_key=True)
 
