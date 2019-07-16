@@ -3,11 +3,14 @@ from peewee import Model
 from peewee import DateTimeField
 
 from app.extension import db
+from app.exception import WrongAuthException
 
 
 def cursor_to_dict(cursor):
     columns = [col[0] for col in cursor.description]
     rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    if rows is None:
+        raise WrongAuthException()
 
     return rows
 
