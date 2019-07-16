@@ -1,7 +1,10 @@
+from typing import Any, Dict, List
+
 from peewee import *
 
-from app.models.base import BaseModel
-from app.models import BoothTable, RFIDTable
+from app.extension import db
+from app.models.base import BaseModel, cursor_to_dict
+from app.models import BoothTable, StudentTable, RFIDTable
 
 
 class HistoryTable(BaseModel):
@@ -11,3 +14,18 @@ class HistoryTable(BaseModel):
 
     class Meta:
         table_name = 'history'
+
+    @classmethod
+    def get_history(cls, user_id: str) -> List[Dict[str, Any]]:
+        query = (
+            BoothTable
+            .select(BoothTable.booth_name, HistoryTable.point)
+            .join(StudentTable)
+            .join(HistoryTable)
+            .where(StudentTable.id == user_id)
+        )
+
+        cursor = db.execute_sql(str(query))
+        rows = cursor_to_dict(cursor)
+
+        return rows

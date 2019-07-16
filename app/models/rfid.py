@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
 from peewee import *
 from flask_jwt_extended import get_jwt_identity
