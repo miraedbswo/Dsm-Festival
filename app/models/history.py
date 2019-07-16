@@ -6,7 +6,7 @@ from app.models import BoothTable, RFIDTable
 
 class HistoryTable(BaseModel):
     rfid = ForeignKeyField(RFIDTable, db_column='rfid', to_field='rfid')
-    used_booth = ForeignKeyField(BoothTable, db_column='used_booth', to_field='booth_name')
+    used_booth = ForeignKeyField(BoothTable, db_column='used_booth', to_field='booth_id')
     point = IntegerField()
 
     class Meta:

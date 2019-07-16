@@ -52,7 +52,8 @@ class RFIDTable(BaseModel):
 
 
 class UnsignedRFIDTable(BaseModel):
-    rfid = CharField(primary_key=True)
+    id = IntegerField(primary_key=True)
+    rfid = CharField(unique=True)
 
     class Meta:
         table_name = 'unsigned_rfid'
