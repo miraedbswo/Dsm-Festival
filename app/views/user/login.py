@@ -14,8 +14,8 @@ class Login(BaseResource):
     def post(self):
         payload = context_property.request_payload
 
-        id = payload.id
-        pw = payload.pw
+        id = payload.get('id')
+        pw = payload.get('pw')
 
         user = StudentTable.get_or_none(id=id)
         if user is None or check_password_hash(user.pw, pw):
