@@ -1,6 +1,8 @@
 from peewee import *
+from flask_jwt_extended import get_jwt_identity
 
-from app.models.base import BaseModel
+from app.extension import db
+from app.models.base import BaseModel, cursor_to_dict
 from app.models.student import StudentTable
 
 
@@ -14,27 +16,43 @@ class RFIDTable(BaseModel):
         table_name = 'rfid'
 
     @classmethod
-    def get_my_rank(cls, user_id: str):
-        my_rank = (
+    def get_my_info(cls):
+        query = (
             RFIDTable
-            .select()
+            .select(StudentTable.number, StudentTable.name, RFIDTable.point)
+            .join(StudentTable)
+            .where(StudentTable.id == get_jwt_identity())
+        )
+        cursor = db.execute_sql(str(query))
+        rows = cursor_to_dict(cursor)
+
+        return rows[0]
+
+    @classmethod
+    def get_my_rank(cls, user_id: str):
+        query = (
+            RFIDTable
+            .select(RFIDTable, StudentTable)
             .join(StudentTable)
             .where(StudentTable.id == user_id)
             .get()
         )
 
+        my_rank = db.execute(query)
+
         return my_rank
 
     @classmethod
     def get_top_10_rank(cls):
-        top_10_rank = (
+        query = (
             RFIDTable
-            .select()
+            .select(RFIDTable, StudentTable)
             .join(StudentTable)
             .order_by(RFIDTable.point.desc())
             .limit(10)
-            .get()
         )
+
+        top_10_rank = db.execute(query)
 
         return top_10_rank
 

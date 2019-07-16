@@ -1,20 +1,26 @@
 from flask import jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from peewee import JOIN
+from pypika import Query, Tables
 
+from app.extension import db
 from app.views.base import BaseResource
-from app.models import RFIDTable
+from app.models import RFIDTable, StudentTable
+
+
+rfid, student = Tables('rfid', 'student')
 
 
 class GetInfoByToken(BaseResource):
     @jwt_required
     def get(self):
-        me = RFIDTable.get_by_id(get_jwt_identity())
+        me = RFIDTable.get_my_info()
 
-        return jsonify({
-            "number": me.number,
-            "name": me.name,
-            "point": me.point,
-        }), 200
+        return {
+            "number": me['number'],
+            "name": me['name'],
+            "point": me['point'],
+        }, 200
 
 
 class GetInfoByRFID(BaseResource):

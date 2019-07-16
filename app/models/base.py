@@ -5,6 +5,13 @@ from peewee import DateTimeField
 from app.extension import db
 
 
+def cursor_to_dict(cursor):
+    columns = [col[0] for col in cursor.description]
+    rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+    return rows
+
+
 class BaseModel(Model):
     class Meta:
         database = db
