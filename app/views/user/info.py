@@ -1,14 +1,9 @@
 from flask import jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from peewee import JOIN
-from pypika import Query, Tables
 
 from app.extension import db
 from app.views.base import BaseResource
 from app.models import RFIDTable, StudentTable
-
-
-rfid, student = Tables('rfid', 'student')
 
 
 class GetInfoByToken(BaseResource):
