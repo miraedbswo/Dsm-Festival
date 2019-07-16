@@ -1,9 +1,8 @@
 from flask import jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 
-from app.extension import db
 from app.views.base import BaseResource
-from app.models import RFIDTable, StudentTable
+from app.models import RFIDTable
 
 
 class GetInfoByToken(BaseResource):
@@ -20,10 +19,10 @@ class GetInfoByToken(BaseResource):
 
 class GetInfoByRFID(BaseResource):
     def get(self, rfid: str):
-        me = RFIDTable.get_user_by_rfid(rfid)
+        me = RFIDTable.get_info_by_rfid(rfid)
 
         return jsonify({
-            "number": me.number,
-            "name": me.name,
-            "point": me.point,
+            "number": me['number'],
+            "name": me['name'],
+            "point": me['point'],
         }), 200

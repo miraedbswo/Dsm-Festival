@@ -1,3 +1,5 @@
+from typing import Dict, Any, List
+
 from peewee import *
 from flask_jwt_extended import get_jwt_identity
 
@@ -16,7 +18,7 @@ class RFIDTable(BaseModel):
         table_name = 'rfid'
 
     @classmethod
-    def get_my_info(cls):
+    def get_info_by_token(cls) -> Dict[str, Any]:
         query = (
             RFIDTable
             .select(StudentTable.number, StudentTable.name, RFIDTable.point)
@@ -29,44 +31,31 @@ class RFIDTable(BaseModel):
         return rows[0]
 
     @classmethod
-    def get_my_rank(cls, user_id: str):
+    def get_info_by_rfid(cls, rfid: str) -> Dict[str, Any]:
         query = (
             RFIDTable
-            .select(RFIDTable, StudentTable)
+            .select(StudentTable.number, StudentTable.name, RFIDTable.point)
             .join(StudentTable)
-            .where(StudentTable.id == user_id)
-            .get()
+            .where(RFIDTable.rfid == rfid)
         )
+        cursor = db.execute_sql(str(query))
+        rows = cursor_to_dict(cursor)
 
-        my_rank = db.execute(query)
-
-        return my_rank
+        return rows[0]
 
     @classmethod
-    def get_top_10_rank(cls):
+    def get_top_10_rank(cls) -> List[Dict[str, Any]]:
         query = (
             RFIDTable
-            .select(RFIDTable, StudentTable)
+            .select(RFIDTable.point, StudentTable.name)
             .join(StudentTable)
             .order_by(RFIDTable.point.desc())
             .limit(10)
         )
+        cursor = db.execute_sql(str(query))
+        rows = cursor_to_dict(cursor)
 
-        top_10_rank = db.execute(query)
-
-        return top_10_rank
-
-    @classmethod
-    def get_by_rfid(cls, rfid: str):
-        user = (
-            RFIDTable
-            .select()
-            .join(StudentTable)
-            .where(RFIDTable.rfid == rfid)
-            .get()
-        )
-
-        return user
+        return rows
 
 
 class UnsignedRFIDTable(BaseModel):
