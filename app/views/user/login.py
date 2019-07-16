@@ -18,7 +18,7 @@ class Login(BaseResource):
         pw = payload.get('pw')
 
         user = StudentTable.get_or_none(id=id)
-        if user is None or check_password_hash(user.pw, pw):
+        if user is None or not check_password_hash(user.pw, pw):
             raise WrongAuthException()
 
         return Response({
