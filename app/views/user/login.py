@@ -1,4 +1,4 @@
-from flask import Response
+from flask import jsonify
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash
 
@@ -21,6 +21,6 @@ class Login(BaseResource):
         if user is None or check_password_hash(user.pw, pw):
             raise WrongAuthException()
 
-        return Response({
+        return jsonify({
             "accessToken": create_access_token(user.id)
-        }, 200)
+        }), 200

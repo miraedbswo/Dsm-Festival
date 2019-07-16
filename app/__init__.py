@@ -66,4 +66,4 @@ def wrong_token_handler(wrong_token: str):
 
 
 def jwt_handle(e: Exception):
-    return str(e), 403
+    return jsonify({'message': str(e)}), 403
