@@ -18,12 +18,12 @@ class RFIDTable(BaseModel):
         table_name = 'rfid'
 
     @classmethod
-    def get_info_by_token(cls) -> Dict[str, Any]:
+    def get_info_by_token(cls, user_id: str) -> Dict[str, Any]:
         query = (
             RFIDTable
             .select(StudentTable.number, StudentTable.name, RFIDTable.point)
             .join(StudentTable)
-            .where(StudentTable.id == get_jwt_identity())
+            .where(StudentTable.id == user_id)
         )
         cursor = db.execute_sql(str(query))
         rows = cursor_to_dict(cursor)

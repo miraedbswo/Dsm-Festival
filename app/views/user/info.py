@@ -1,5 +1,5 @@
 from flask import jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.views.base import BaseResource
 from app.models import RFIDTable
@@ -8,7 +8,7 @@ from app.models import RFIDTable
 class GetInfoByToken(BaseResource):
     @jwt_required
     def get(self):
-        me = RFIDTable.get_my_info()
+        me = RFIDTable.get_info_by_token(user_id=get_jwt_identity())
 
         return {
             "number": me['number'],

@@ -1,8 +1,6 @@
-from flask import jsonify
-
 from app.decorators.json_schema import json_type_validate, RFID_POST_JSON
 from app.views.base import BaseResource
-from app.models import UnsignedRFIDTable, RFIDTable
+from app.models import UnsignedRFIDTable
 from app.context import context_property
 
 
