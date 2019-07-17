@@ -15,6 +15,7 @@ flask-jwt-extended = "*"
 peewee = "*"
 pydantic = "*"
 pymysql = "*"
+termcolor = "*"
 
 [requires]
 python_version = "3.7"

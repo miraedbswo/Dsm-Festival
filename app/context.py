@@ -1,13 +1,11 @@
 from typing import Optional, Type
 
-from pydantic import BaseModel
-
 
 class _ContextProperty:
-    _request_payload: Optional[BaseModel] = None
+    _request_payload = None
 
     @property
-    def request_payload(self) -> Optional[BaseModel]:
+    def request_payload(self) -> Optional:
         return self._request_payload
 
     @request_payload.setter

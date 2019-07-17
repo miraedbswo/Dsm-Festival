@@ -37,8 +37,8 @@ class RFIDTable(BaseModel):
     def pay(cls, rfid: str, booth_id: int, point: int):
         from app.models.history import HistoryTable
         user = RFIDTable.get_info_by_rfid(rfid)
-        if HistoryTable.is_used(rfid, booth_id):
-            raise UsedBoothException()
+        # if HistoryTable.is_used(rfid, booth_id):
+        #     raise UsedBoothException()
 
         # remain_point = user.get('point') + point
         # level = user.get('level')
