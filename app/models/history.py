@@ -2,8 +2,7 @@ from typing import Any, Dict, List
 
 from peewee import *
 
-from app.extension import db
-from app.models.base import BaseModel, cursor_to_dict
+from app.models.base import BaseModel, execute_sql
 from app.models import BoothTable, StudentTable, RFIDTable
 
 
@@ -16,6 +15,24 @@ class HistoryTable(BaseModel):
         table_name = 'history'
 
     @classmethod
+    def is_used(cls, rfid: str, booth_id: int) -> bool:
+        query = (
+            HistoryTable
+            .select(HistoryTable.used_booth)
+            .where(
+                (HistoryTable.rfid == rfid) &
+                (HistoryTable.used_booth == booth_id)
+            )
+        )
+
+        row = execute_sql(query)
+
+        if row is None:
+            return False
+
+        return True
+
+    @classmethod
     def get_history(cls, user_id: str) -> List[Dict[str, Any]]:
         query = (
             BoothTable
@@ -25,7 +42,6 @@ class HistoryTable(BaseModel):
             .where(StudentTable.id == user_id)
         )
 
-        cursor = db.execute_sql(str(query))
-        rows = cursor_to_dict(cursor)
+        rows = execute_sql(query)
 
         return rows
