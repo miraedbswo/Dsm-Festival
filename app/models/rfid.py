@@ -40,13 +40,12 @@ class RFIDTable(BaseModel):
         if HistoryTable.is_used(rfid, booth_id):
             raise UsedBoothException()
 
-        remain_point = user.get('point') + point
-        level = user.get('level')
+        # remain_point = user.get('point') + point
+        # level = user.get('level')
+        # pay_level = RFIDTable.is_payable(remain_point, level)
 
-        pay_level = RFIDTable.is_payable(remain_point, level)
-
-        if (level == pay_level) == 0:
-            query = RFIDTable.update(point=remain_point).where(RFIDTable.rfid == rfid)
+        if user.get('level') == 0:
+            query = RFIDTable.update(point=point).where(RFIDTable.rfid == rfid)
             db.execute_sql(str(query))
 
         HistoryTable.set_history(rfid, booth_id, point)
