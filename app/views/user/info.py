@@ -23,9 +23,8 @@ class GetInfoByRFID(BaseResource):
     def get(self, rfid: str):
         me = RFIDTable.get_info_by_rfid(rfid)
 
-        return Response(
-            json.dumps({
-                "number": me['number'],
-                "name": me['name'],
-                "point": me['point'],
-            }, ensure_ascii=False).encode('utf8'), 200)
+        number = me.get('number')
+        name = me.get('name')
+        point = me.get('point')
+
+        return Response(f'{number},{name},{point}', 200)

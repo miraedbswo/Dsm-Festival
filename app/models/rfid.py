@@ -1,10 +1,8 @@
 from typing import Any, Dict, List
 
 from peewee import *
-from flask_jwt_extended import get_jwt_identity
 
-from app.extension import db
-from app.models.base import BaseModel, cursor_to_dict
+from app.models.base import BaseModel, execute_sql
 from app.models.student import StudentTable
 
 
@@ -25,8 +23,8 @@ class RFIDTable(BaseModel):
             .join(StudentTable)
             .where(StudentTable.id == user_id)
         )
-        cursor = db.execute_sql(str(query))
-        rows = cursor_to_dict(cursor)
+
+        rows = execute_sql(query)
 
         return rows[0]
 
@@ -38,8 +36,7 @@ class RFIDTable(BaseModel):
             .join(StudentTable)
             .where(RFIDTable.rfid == rfid)
         )
-        cursor = db.execute_sql(str(query))
-        rows = cursor_to_dict(cursor)
+        rows = execute_sql(query)
 
         return rows[0]
 
@@ -52,8 +49,7 @@ class RFIDTable(BaseModel):
             .order_by(RFIDTable.point.desc())
             .limit(10)
         )
-        cursor = db.execute_sql(str(query))
-        rows = cursor_to_dict(cursor)
+        rows = execute_sql(query)
 
         return rows
 

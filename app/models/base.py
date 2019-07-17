@@ -6,7 +6,9 @@ from app.extension import db
 from app.exception import WrongAuthException
 
 
-def cursor_to_dict(cursor):
+def execute_sql(sql):
+    cursor = db.execute_sql(str(sql))
+
     columns = [col[0] for col in cursor.description]
     rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
     if rows is None:
