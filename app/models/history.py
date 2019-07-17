@@ -3,7 +3,6 @@ from typing import Any, Dict, List
 from peewee import *
 
 from app.models.base import BaseModel, execute_sql
-from app.models.student import StudentTable
 from app.models.rfid import RFIDTable
 from app.models.booth import BoothTable
 
@@ -47,9 +46,9 @@ class HistoryTable(BaseModel):
         query = (
             BoothTable
             .select(BoothTable.booth_name, HistoryTable.point)
-            .join(StudentTable)
-            .join(HistoryTable)
-            .where(StudentTable.id == user_id)
+            .join(HistoryTable, on=HistoryTable.used_booth == BoothTable.booth_id)
+            .join(RFIDTable)
+            .where(RFIDTable.student_id == user_id)
         )
 
         rows = execute_sql(query)
