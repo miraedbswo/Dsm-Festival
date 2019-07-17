@@ -3,6 +3,8 @@ from typing import Any, Dict, List
 
 from peewee import *
 
+
+from app.misc.log import log
 from app.extension import db
 from app.exception import ForbiddenException, WrongAuthException, UsedBoothException
 from app.models.base import BaseModel, execute_sql
@@ -48,7 +50,14 @@ class RFIDTable(BaseModel):
             query = RFIDTable.update(point=point).where(RFIDTable.rfid == rfid)
             db.execute_sql(str(query))
 
-        HistoryTable.set_history(rfid, booth_id, point=(point - user.get('point')))
+        name = user['name']
+        pay_point = point - user.get('point')
+
+        log(
+            message=f'{name}님이 {booth_id}번 부스에서 {pay_point} 포인트를 결제했습니다.'
+        )
+
+        HistoryTable.set_history(rfid, booth_id, point=pay_point)
 
     @classmethod
     def get_info_by_token(cls, user_id: str) -> Dict[str, Any]:
