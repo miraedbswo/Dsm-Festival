@@ -48,7 +48,7 @@ class RFIDTable(BaseModel):
             query = RFIDTable.update(point=point).where(RFIDTable.rfid == rfid)
             db.execute_sql(str(query))
 
-        HistoryTable.set_history(rfid, booth_id, point)
+        HistoryTable.set_history(rfid, booth_id, point=(point - user.get('point')))
 
     @classmethod
     def get_info_by_token(cls, user_id: str) -> Dict[str, Any]:
