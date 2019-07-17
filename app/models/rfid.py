@@ -1,9 +1,17 @@
+from enum import Enum
 from typing import Any, Dict, List
 
 from peewee import *
 
+from app.extension import db
+from app.exception import ForbiddenException, WrongAuthException, UsedBoothException
 from app.models.base import BaseModel, execute_sql
 from app.models.student import StudentTable
+
+
+class PayStatus(Enum):
+    HAS_MONEY = 0
+    STAFF = 1
 
 
 class RFIDTable(BaseModel):
@@ -14,6 +22,34 @@ class RFIDTable(BaseModel):
 
     class Meta:
         table_name = 'rfid'
+
+    @classmethod
+    def is_payable(cls, point: int, level: int) -> PayStatus:
+        if point < 0:
+            raise ForbiddenException()
+
+        if level > 0:
+            return PayStatus.STAFF
+
+        return PayStatus.HAS_MONEY
+
+    @classmethod
+    def pay(cls, rfid: str, booth_id: int, point: int):
+        from app.models.history import HistoryTable
+        user = RFIDTable.get_info_by_rfid(rfid)
+        if HistoryTable.is_used(rfid, booth_id):
+            raise UsedBoothException()
+
+        remain_point = user.get('point') + point
+        level = user.get('level')
+
+        pay_level = RFIDTable.is_payable(remain_point, level)
+
+        if (level == pay_level) == 0:
+            query = RFIDTable.update(point=remain_point).where(RFIDTable.rfid == rfid)
+            db.execute_sql(str(query))
+
+        HistoryTable.set_history(rfid, booth_id, point)
 
     @classmethod
     def get_info_by_token(cls, user_id: str) -> Dict[str, Any]:
@@ -32,11 +68,14 @@ class RFIDTable(BaseModel):
     def get_info_by_rfid(cls, rfid: str) -> Dict[str, Any]:
         query = (
             RFIDTable
-            .select(StudentTable.number, StudentTable.name, RFIDTable.point)
+            .select(StudentTable.number, StudentTable.name, RFIDTable.point, RFIDTable.level)
             .join(StudentTable)
             .where(RFIDTable.rfid == rfid)
         )
         rows = execute_sql(query)
+
+        if not rows:
+            raise WrongAuthException()
 
         return rows[0]
 

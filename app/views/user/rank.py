@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.views.base import BaseResource
-from app.models import RFIDTable
+from app.models.rfid import RFIDTable
 
 
 class Rank(BaseResource):

@@ -3,7 +3,9 @@ from typing import Any, Dict, List
 from peewee import *
 
 from app.models.base import BaseModel, execute_sql
-from app.models import BoothTable, StudentTable, RFIDTable
+from app.models.student import StudentTable
+from app.models.rfid import RFIDTable
+from app.models.booth import BoothTable
 
 
 class HistoryTable(BaseModel):
@@ -27,10 +29,18 @@ class HistoryTable(BaseModel):
 
         row = execute_sql(query)
 
-        if row is None:
+        if not row:
             return False
 
         return True
+
+    @classmethod
+    def set_history(cls, rfid: str, booth_id: int, point: int):
+        HistoryTable.insert(
+            rfid=rfid,
+            used_booth=booth_id,
+            point=point
+        ).execute()
 
     @classmethod
     def get_history(cls, user_id: str) -> List[Dict[str, Any]]:

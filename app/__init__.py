@@ -5,11 +5,6 @@ from jwt.exceptions import PyJWTError
 from flask_jwt_extended.exceptions import JWTExtendedException
 from peewee import MySQLDatabase
 
-from app.models.booth import BoothTable
-from app.models.rfid import RFIDTable
-from app.models.student import StudentTable
-from app.models.history import HistoryTable
-
 
 def register_extension(flask_app: Flask):
     from app import extension
@@ -33,7 +28,10 @@ def register_hooks(flask_app: Flask):
 
 
 def register_views(flask_app: Flask):
+    from app.views.booth import booth_blueprint
     from app.views.user import user_blueprint
+
+    flask_app.register_blueprint(booth_blueprint)
     flask_app.register_blueprint(user_blueprint)
 
 
