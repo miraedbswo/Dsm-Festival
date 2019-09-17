@@ -1,6 +1,6 @@
 # Dsm-Festival
-![](./image/login.png =100x20)
-![](./image/main.png =100x20)
-![](./image/rank.png =100x20)
-![](./image/history.png =100x20)
-![](./image/showlist.png =100x20)
+![login](./image/login.png =100x20)
+![main](./image/main.png =100x20)
+![rank](./image/rank.png =100x20)
+![history](./image/history.png =100x20)
+![show](./image/showlist.png =100x20)
